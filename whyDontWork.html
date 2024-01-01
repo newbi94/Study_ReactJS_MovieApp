@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <body>
+      <div id="root"></div>
+    </body>
+    <script src=" https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      
+      function TimeConverter() {
+        const [amount, setAmount] = React.useState(0);
+        const [inverted, setInverted] = React.useState(false);
+        const onChange = (event) => {
+          setAmount(event.target.value);
+        };
+        //onChangeText로 문자를 가져오는건 함수도 필요 없고 간단했었는데
+        //event.target.value 너무 거추장스러운 느낌
+        const reset = () => setAmount(0);
+        const onInvert = () => {
+          reset();
+          setInverted((current) => !current);
+        };
+          // 니꼬가 setInverted(!inverted)로 하면 안좋다고 하는데
+          // 예시가 없어서 이해가 어려운 부분
+        return(
+          <div>
+            <h1>Time Converter</h1>
+           <div>
+            <label htmlFor="minutes">Minutes</label>
+            <input 
+                  value={!inverted ? amount : Math.round(amount*60)}
+                  id="minutes"
+                  placeholder="Minutes" 
+                  type="number"
+                  onChange={onChange}
+                  //onChangeText={setText} 처럼 간단하게 만들고 싶다
+                  disabled={inverted}
+                  />
+            </div>
+            <div>
+              <label htmlFor="hours">Hours</label>
+              <input
+                  value={inverted ? amount : Math.round(amount/60)}
+                  id="hours" 
+                  placeholder="Hours" 
+                  type="number" 
+                  onChange={onChange}
+                  disabled={!inverted} 
+              />
+            </div>
+            <button onClick={reset}>Reset</button>
+            <button onClick={onInvert}>{inverted ? "Turn Back" : "Invert"}</button>
+          </div>
+        );
+         
+      }
+
+      function KmToMiles(){
+        return <h3>KM 2 M</h3>
+      }
+
+      function App() {
+        const [choice,setChoice] = React.useState("Main");
+        const changeRenderToTime = setChoice("Time")
+        const changeRenderToKm = setChoice("Km")
+        const changeRenderToMain = setChoice("Main")
+        return(
+          <div>
+            <h1 hidden={choice="Main"}>Super Converter</h1>
+            <TimeConverter 
+            hidden={choice=!"Time"}
+            />
+            <KmToMiles
+            hidden={choice=!"Km"}
+            />
+            <button onClick={changeRenderToTime}>Time Converter</button>
+            <button onClick={changeRenderToKm}>KM Converter</button>
+            <button onClick={changeRenderToMain}>back to main</button>
+            </div>
+            
+        );
+      }
+      const root = document.getElementById("root");
+      ReactDOM.render(<App/>, root);
+    </script>
+</html>
