@@ -6,80 +6,40 @@
     <script src=" https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
     <script type="text/babel">
-      
-      function TimeConverter() {
-        const [amount, setAmount] = React.useState(0);
-        const [inverted, setInverted] = React.useState(false);
-        const onChange = (event) => {
-          setAmount(event.target.value);
-        };
-        //onChangeText로 문자를 가져오는건 함수도 필요 없고 간단했었는데
-        //event.target.value 너무 거추장스러운 느낌
-        const reset = () => setAmount(0);
-        const onInvert = () => {
-          reset();
-          setInverted((current) => !current);
-        };
-          // 니꼬가 setInverted(!inverted)로 하면 안좋다고 하는데
-          // 예시가 없어서 이해가 어려운 부분
+     
+    function Btn({text, x }) {
+         return (
+            <button 
+                onClick={x} //자식component에서 이벤트가 발생하면 부모 component state를 바꾼다
+                style={{
+                backgroundColor: "tomato",
+                color:"white",
+                padding: "10px 20px",
+                border: 0,
+                borderRadius: 10,
+                fontSize: 18,
+         }}
+         >
+          {text}
+         </button>
+         );
+        
+         }
+           
+    const MemorizedBtn = React.memo(Btn); //변화가 없으면 re-render하지 않게하는 코드(최적화를위한)
+    function App() {
+        const [value, setValue] = React.useState("Save Changes");
+        const changeValue = () => setValue("Revert Changes"); 
+        // 자식 component에서 이벤트가 발생하면 해당 함수가 실행되어 이곳 부모 component의 state(=value)가 바뀌어 text가 바뀐다.
         return(
           <div>
-            <h1>Time Converter</h1>
-           <div>
-            <label htmlFor="minutes">Minutes</label>
-            <input 
-                  value={!inverted ? amount : Math.round(amount*60)}
-                  id="minutes"
-                  placeholder="Minutes" 
-                  type="number"
-                  onChange={onChange}
-                  //onChangeText={setText} 처럼 간단하게 만들고 싶다
-                  disabled={inverted}
-                  />
-            </div>
-            <div>
-              <label htmlFor="hours">Hours</label>
-              <input
-                  value={inverted ? amount : Math.round(amount/60)}
-                  id="hours" 
-                  placeholder="Hours" 
-                  type="number" 
-                  onChange={onChange}
-                  disabled={!inverted} 
-              />
-            </div>
-            <button onClick={reset}>Reset</button>
-            <button onClick={onInvert}>{inverted ? "Turn Back" : "Invert"}</button>
+            <MemorizedBtn text={value} x ={changeValue} /> 
+            <MemorizedBtn text="Continue" /> 
           </div>
         );
-         
-      }
-
-      function KmToMiles(){
-        return <h3>KM 2 M</h3>
-      }//TimeConverter와 똑같음
-
-      function App() {
-        const [index,setIndex] = React.useState("xx");
-        const onSelect = (event) => {
-          setIndex(event.target.value);
-        };
-        return(
-          <div>
-            <h1>Super Converter</h1>
-            <select value={index} onChange={onSelect}>
-              <option value="xx">Select your units</option>
-              <option value="0">Minutes & Hours</option>
-              <option value="1">Km & Miles</option>  
-            </select>
-            <hr/>{/*Super Converter라는 글자와 아래 앱들의 경계선*/}
-            {index === "xx" ? "Please select your units" : null}
-            {index === "0" ? <TimeConverter /> : null}
-            {index === "1" ? <KmToMiles /> : null}
-          </div>
-        );
-      }
+     };
       const root = document.getElementById("root");
       ReactDOM.render(<App/>, root);
     </script>
