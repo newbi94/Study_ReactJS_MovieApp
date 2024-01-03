@@ -3,23 +3,25 @@
     <body>
       <div id="root"></div>
     </body>
-    <script src=" https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src=" https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
     <script type="text/babel">
      
-    function Btn({text, x }) {
+    function Btn({text, fontSize=33 }) {
+      //fontSize=33 -> default값 설정으로, 
+      //fontSize값을 받지 못하면 33으로 기본설정 된다.
          return (
             <button 
-                onClick={x} //자식component에서 이벤트가 발생하면 부모 component state를 바꾼다
+              
                 style={{
                 backgroundColor: "tomato",
                 color:"white",
                 padding: "10px 20px",
                 border: 0,
                 borderRadius: 10,
-                fontSize: 18,
+                fontSize, // style을 받아오는 경우 property이름으로 받아올 것
          }}
          >
           {text}
@@ -27,16 +29,21 @@
          );
         
          }
-           
-    const MemorizedBtn = React.memo(Btn); //변화가 없으면 re-render하지 않게하는 코드(최적화를위한)
-    function App() {
-        const [value, setValue] = React.useState("Save Changes");
-        const changeValue = () => setValue("Revert Changes"); 
-        // 자식 component에서 이벤트가 발생하면 해당 함수가 실행되어 이곳 부모 component의 state(=value)가 바뀌어 text가 바뀐다.
+         Btn.propTypes = {
+          text: PropTypes.string,
+          fontSize: PropTypes.number.isrequired,
+        }; 
+   //prop들을 받아올 때 타입을 검사해주는 역할, 지정해놓은 타입과 다를 시 경고를 띄워준다.
+   //아래 두번째 Btn에 text는 number로 fontSize는 string으로 prop을 보내기때문에
+   //이대로 실행하면 경고가 띄워질 것.
+   //.isrequired는 필수로 설정하는 장치인데, 만약 아래 두번째 Btn에서 fontSize에 대한 prop을
+   //보내지 않으면 경고를 띄워주는 역할이다. 이것이 없이 그냥 proptype검사만 한다면
+   //fontSize를 보내지 않았을 때는 경고가 발생하지 않는다.
+    function App() { 
         return(
           <div>
-            <MemorizedBtn text={value} x ={changeValue} /> 
-            <MemorizedBtn text="Continue" /> 
+            <Btn text="Save Changes" fontSize={18}/> 
+            <Btn text={14} /> 
           </div>
         );
      };
